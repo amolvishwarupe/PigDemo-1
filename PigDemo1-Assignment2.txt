@@ -1,0 +1,70 @@
+
+
+Pig implementation of functions 
+
+
+
+student = LOAD 'studentus.txt'
+   USING PigStorage(',')
+   as ( Name:chararray, col:chararray, Dob:chararray, Stream:chararray, Grade:float, state:chararray, city:chararray );
+
+
+
+1) Concat
+
+grunt> student_concate = FOREACH student GENERATE CONCAT(state , city);
+grunt> dump student_concate
+
+
+
+2) Tokenize
+
+grunt> student_dob_token = FOREACH student GENERATE TOKENIZE(Dob);
+grunt> dump  student_dob_token
+
+3) Sum
+
+grunt> student_grade_sum = foreach student_grp GENERATE group , SUM(student.Grade);
+grunt> dump student_grade_sum
+
+
+4) Min
+
+grunt> student_grade_min  = foreach student_grp GENERATE group , MIN(student.Grade);
+grunt> dump student_grade_min
+
+
+5) Max
+
+grunt> student_grade_min  = foreach student_grp GENERATE group , MAX(student.Grade);
+grunt> dump student_grade_min
+
+
+6) Limit
+
+grunt> first_10 = LIMIT student 10;
+grunt> dump first_10
+
+
+7) Store
+
+STORE first_10 INTO 'student_10.txt' USING PigStorage(',');
+cat student_10.txt
+
+8) Distinct
+
+grunt> student_state = FOREACH student GENERATE city;
+grunt> distinct_city = DISTINCT student_state;
+grunt> dump distinct_city
+
+
+9) Flatten
+
+student_101 = LOAD 'student_10.txt' as ( Name:chararray);
+grunt> Words = FOREACH student_101 GENERATE FLATTEN(TOKENIZE(Name,',')) AS word;
+
+
+10) IsEmpty
+
+grunt> city_isempty = FILTER student_10 BY IsEmpty(city);
+grunt> dump city_isempty;
